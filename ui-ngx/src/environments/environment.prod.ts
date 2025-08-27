@@ -15,7 +15,7 @@
 ///
 
 export const environment = {
-  appTitle: 'TBMQ',
+  appTitle: 'IoT4Tech TBMQ',
   production: true,
 // @ts-ignore
   tbmqVersion: TBMQ_VERSION,

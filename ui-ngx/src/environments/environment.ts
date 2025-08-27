@@ -19,7 +19,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  appTitle: 'TBMQ',
+  appTitle: 'IoT4Tech TBMQ',
   production: false,
 // @ts-ignore
   tbmqVersion: TBMQ_VERSION,
