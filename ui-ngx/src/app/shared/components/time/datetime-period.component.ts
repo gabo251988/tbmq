@@ -14,13 +14,14 @@
 /// limitations under the License.
 ///
 
-import { Component, forwardRef, input, model } from '@angular/core';
+import { Component, forwardRef, model } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { FixedWindow } from '@shared/models/time/time.models';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { TranslateModule } from '@ngx-translate/core';
-import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
 import { MatInput } from '@angular/material/input';
+import { MatTimepicker, MatTimepickerInput, MatTimepickerToggle } from '@angular/material/timepicker';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 
 @Component({
     selector: 'tb-datetime-period',
@@ -33,7 +34,7 @@ import { MatInput } from '@angular/material/input';
             multi: true
         }
     ],
-    imports: [MatFormField, MatLabel, TranslateModule, MatDatetimepickerModule, MatPrefix, MatInput, FormsModule]
+    imports: [MatFormField, MatLabel, TranslateModule, MatSuffix, MatInput, FormsModule, MatTimepickerInput, MatTimepickerToggle, MatTimepicker, MatDatepicker, MatDatepickerToggle, MatDatepickerInput]
 })
 export class DatetimePeriodComponent implements ControlValueAccessor {
 
@@ -52,6 +53,9 @@ export class DatetimePeriodComponent implements ControlValueAccessor {
   changePending = false;
 
   private propagateChange = null;
+
+  private prevStartDate: Date | null = null;
+  private prevEndDate: Date | null = null;
 
   constructor() {
   }
@@ -89,6 +93,8 @@ export class DatetimePeriodComponent implements ControlValueAccessor {
       this.endDate = date;
       this.updateView();
     }
+    this.prevStartDate = this.startDate ? new Date(this.startDate.getTime()) : null;
+    this.prevEndDate = this.endDate ? new Date(this.endDate.getTime()) : null;
     this.updateMinMaxDates();
   }
 
@@ -117,20 +123,56 @@ export class DatetimePeriodComponent implements ControlValueAccessor {
     if (this.startDate) {
       if (this.startDate.getTime() > this.maxStartDate.getTime()) {
         this.startDate = new Date(this.maxStartDate.getTime());
+      } else {
+        const prev = this.prevStartDate;
+        if (prev) {
+          const dateChanged = this.startDate.getFullYear() !== prev.getFullYear() ||
+            this.startDate.getMonth() !== prev.getMonth() ||
+            this.startDate.getDate() !== prev.getDate();
+          const timeResetToMidnight = this.startDate.getHours() === 0 &&
+            this.startDate.getMinutes() === 0 &&
+            this.startDate.getSeconds() === 0 &&
+            this.startDate.getMilliseconds() === 0;
+          if (dateChanged && timeResetToMidnight) {
+            this.startDate.setHours(prev.getHours(), prev.getMinutes(), prev.getSeconds(), prev.getMilliseconds());
+          }
+        }
+      }
+      if (this.maxStartDate && this.startDate.getTime() > this.maxStartDate.getTime()) {
+        this.startDate = new Date(this.maxStartDate.getTime());
       }
       this.updateMinMaxDates();
     }
     this.updateView();
+    this.prevStartDate = this.startDate ? new Date(this.startDate.getTime()) : null;
   }
 
   onEndDateChange() {
     if (this.endDate) {
       if (this.endDate.getTime() < this.minEndDate.getTime()) {
         this.endDate = new Date(this.minEndDate.getTime());
+      } else {
+        const prev = this.prevEndDate;
+        if (prev) {
+          const dateChanged = this.endDate.getFullYear() !== prev.getFullYear() ||
+            this.endDate.getMonth() !== prev.getMonth() ||
+            this.endDate.getDate() !== prev.getDate();
+          const timeResetToMidnight = this.endDate.getHours() === 0 &&
+            this.endDate.getMinutes() === 0 &&
+            this.endDate.getSeconds() === 0 &&
+            this.endDate.getMilliseconds() === 0;
+          if (dateChanged && timeResetToMidnight) {
+            this.endDate.setHours(prev.getHours(), prev.getMinutes(), prev.getSeconds(), prev.getMilliseconds());
+          }
+        }
+      }
+      if (this.minEndDate && this.endDate.getTime() < this.minEndDate.getTime()) {
+        this.endDate = new Date(this.minEndDate.getTime());
       }
       this.updateMinMaxDates();
     }
     this.updateView();
+    this.prevEndDate = this.endDate ? new Date(this.endDate.getTime()) : null;
   }
 
 }

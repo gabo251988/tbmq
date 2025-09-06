@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.thingsboard.mqtt.broker.service.install.update;
+package org.thingsboard.mqtt.broker.service.install;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.stereotype.Component;
 
-@Service
-@Profile("install")
-@Slf4j
+@Component
 @RequiredArgsConstructor
-public class DefaultDataUpdateService implements DataUpdateService {
+public class ProjectInfo {
 
-    @Override
-    public void updateData() throws Exception {
-        log.info("Updating data ...");
-        //TODO: should be cleaned after each release
-        log.info("Data updated.");
+    private final BuildProperties buildProperties;
+
+    public String getProjectVersion() {
+        return buildProperties.getVersion().replaceAll("[^\\d.]", "");
+    }
+
+    public String getProductType() {
+        return "CE";
     }
 
 }

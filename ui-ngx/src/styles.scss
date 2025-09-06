@@ -1313,14 +1313,15 @@ pre.tb-highlight {
   }
 
   .mat-mdc-form-field-icon-suffix {
-    opacity: 0.54;
-
-    &:hover {
-      opacity: 1;
+    > *:not(.full-opacity) {
+      opacity: 0.54;
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
-  .cdk-overlay-pane .presentation-select-panel {
+  .cdk-overlay-pane .select-panel-full-width {
     min-width: min-content !important;
   }
 }
